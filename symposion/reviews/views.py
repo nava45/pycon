@@ -278,7 +278,11 @@ def review_status(request, section_slug=None, key=None):
     if not request.user.has_perm("reviews.can_review_%s" % section_slug):
         return access_not_permitted(request)
     
-    VOTE_THRESHOLD = settings.SYMPOSION_VOTE_THRESHOLD
+    # FIXME: currently there's an off-by-one error in vote counts which bleeds
+    # over into the reports. I can't find what causes the off-by-one error in
+    # the counts, so this is a totally ghetto fix. It should be removed when
+    # the real bug is squished.
+    VOTE_THRESHOLD = settings.SYMPOSION_VOTE_THRESHOLD + 1
     
     ctx = {
         "section_slug": section_slug,
